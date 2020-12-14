@@ -1,4 +1,4 @@
-package es.upm.miw.betca_tpv_user.configurations;
+package net.iesmaestrojuancalero.gesties.backend.configurations;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,33 +19,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService userDetailsService;
-
-    @Autowired
-    public SecurityConfiguration(@Qualifier("miw.users") UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .ldapAuthentication()
+                .contextSource()
+                .url("ldap://ldap:389/dc=instituto,dc=extremadura,dc=es")
+                .managerDn("cn=replica,dc=instituto,dc=extremadura,dc=es")
+                .managerPassword("replica")
+                .and()
+                .userDnPatterns("uid={0},ou=People")
+                .groupSearchBase("ou=group");
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
-
-    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().httpBasic()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().addFilter(jwtAuthorizationFilter());
-    }
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthorizationFilter() throws Exception {
-        return new JwtAuthenticationFilter(this.authenticationManager());
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        http.authorizeRequests()
+                .antMatchers("/secured").fullyAuthenticated()
+                .antMatchers("/").permitAll()
+                .and().formLogin();
     }
 
 }
