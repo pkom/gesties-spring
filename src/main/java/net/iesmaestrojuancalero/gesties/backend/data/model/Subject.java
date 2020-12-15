@@ -11,8 +11,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "editorials")
-public class Editorial {
+@Table(name = "subjects")
+public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -20,7 +20,6 @@ public class Editorial {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "editorial")
-    private List< Book> books;
-
+    @OneToMany(mappedBy = "subject")
+    private List< Book > books;
 }

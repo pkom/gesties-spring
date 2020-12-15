@@ -15,6 +15,7 @@ public class Copy {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+    private int num;
     @NonNull
     private String barcode;
     @Enumerated(EnumType.STRING)

@@ -3,6 +3,7 @@ package net.iesmaestrojuancalero.gesties.backend.data.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,6 +26,7 @@ public class Book {
     private String barcode;
     private int year;
     private int stock;
+    private BigDecimal price;
     private boolean active;
 
     @OneToMany
@@ -34,7 +36,10 @@ public class Book {
     private Level level;
 
     @ManyToOne
-    private Editorial editorial;
+    private Publisher publisher;
+
+    @ManyToOne
+    private Subject subject;
 
 
     @OneToMany(mappedBy = "book")
